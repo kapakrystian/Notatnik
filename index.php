@@ -13,15 +13,36 @@ $action = $_GET['action'] ?? DEFAULT_ACTION;
 
 $view = new View();
 
-
 $viewParams = [];
-if ($action === 'create') {
-    $page = 'create';
-    $viewParams['resultCreate'] = 'create param';
-} else {
-    $page = 'list';
-    $viewParams['resultList'] = 'list param';
-}
 
+
+switch ($action) {
+
+    case 'create':
+        $page = 'create';
+        /*-----------------------------------------------------
+        Flaga określająca moment przed i po utworzeniu notatki
+        false -> przed, pobrany zostaje GET'em sam form
+        true -> po, wysłane POST'em dane z form'a
+        ------------------------------------------------------*/
+        $created = false;
+
+        if (!empty($_POST)) {
+            $created = true;
+            $viewParams = [
+                'title' => $_POST['title'],
+                'description' => $_POST['description']
+            ];
+        }
+        $viewParams['created'] = $created;
+        break;
+
+    case 'show':
+        # code...
+
+    default:
+        $page = 'list';
+        break;
+}
 
 $view->render($page, $viewParams);
