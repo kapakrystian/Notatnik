@@ -4,17 +4,33 @@ declare(strict_types=1);
 
 namespace App;
 
+require_once('src/Database.php');
 require_once('src/View.php');
 
 class Controller
 {
     private const DEFAULT_ACTION = 'list';
 
+    static private array $configuration = [];
+
     private array $request;
     private View $view;
 
+    /*--------------------------------------------
+    Statyk pobierający konfigurację bazy danych
+    ---------------------------------------------*/
+    static public function initConfiguration(array $configuration): void
+    {
+        self::$configuration = $configuration;
+    }
+
+    /*---------
+    Konstruktor
+    -----------*/
     public function __construct(array $request)
     {
+        $db = new Database(self::$configuration['db']);
+
         $this->request = $request;
         $this->view = new View();
     }
