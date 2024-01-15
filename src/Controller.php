@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Exception\ConfigurationException;
+
 require_once('src/Database.php');
 require_once('src/View.php');
+require_once('src/Exceptions/ConfigurationException.php');
 
 class Controller
 {
@@ -16,9 +19,9 @@ class Controller
     private array $request;
     private View $view;
 
-    /*--------------------------------------------
+    /*-----------------------------------------
     Statyk pobierający konfigurację bazy danych
-    ---------------------------------------------*/
+    ------------------------------------------*/
     static public function initConfiguration(array $configuration): void
     {
         self::$configuration = $configuration;
@@ -29,6 +32,9 @@ class Controller
     -----------*/
     public function __construct(array $request)
     {
+        if (empty(self::$configuration['db'])) {
+            throw new ConfigurationException('Configuration Error');
+        }
         $db = new Database(self::$configuration['db']);
 
         $this->request = $request;
