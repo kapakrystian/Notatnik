@@ -18,6 +18,7 @@ class Controller
 
     private array $request;
     private View $view;
+    private Database $database;
 
     /*-----------------------------------------
     Statyk pobierający konfigurację bazy danych
@@ -35,7 +36,7 @@ class Controller
         if (empty(self::$configuration['db'])) {
             throw new ConfigurationException('Configuration Error');
         }
-        $db = new Database(self::$configuration['db']);
+        $this->database = new Database(self::$configuration['db']);
 
         $this->request = $request;
         $this->view = new View();
@@ -57,17 +58,23 @@ class Controller
                 false -> przed, pobrany zostaje GET'em sam form
                 true -> po, wysłane POST'em dane z form'a
                 ------------------------------------------------------*/
-                $created = false;
 
                 $data = $this->getRequestPost();
                 if (!empty($data)) {
-                    $created = true;
-                    $viewParams = [
+
+                    /*-------------------------------------------------
+                    Nie ma potrzeby przekazywania całego POST'a dlatego
+                    dane przekazujemy zmienną $noteData
+                    --------------------------------------------------*/
+                    $noteData = [
                         'title' => $data['title'],
                         'description' => $data['description']
                     ];
+
+                    $this->database->createNote($noteData);
+                    header('Location: /?before=created');
                 }
-                $viewParams['created'] = $created;
+
                 break;
 
             case 'show':
@@ -75,6 +82,11 @@ class Controller
 
             default:
                 $page = 'list';
+
+                $data = $this->getRequestGet();
+
+                $viewParams['before'] = $data['before'] ?? null;
+
                 break;
         }
 
