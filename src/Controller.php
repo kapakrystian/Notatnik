@@ -47,19 +47,12 @@ class Controller
     ------------------------------*/
     public function run(): void
     {
-        $viewParams = [];
-
         switch ($this->action()) {
 
             case 'create':
                 $page = 'create';
-                /*-----------------------------------------------------
-                Flaga określająca moment przed i po utworzeniu notatki
-                false -> przed, pobrany zostaje GET'em sam form
-                true -> po, wysłane POST'em dane z form'a
-                ------------------------------------------------------*/
-
                 $data = $this->getRequestPost();
+
                 if (!empty($data)) {
 
                     /*-------------------------------------------------
@@ -77,20 +70,20 @@ class Controller
 
                 break;
 
-            case 'show':
-                # code...
-
             default:
                 $page = 'list';
 
                 $data = $this->getRequestGet();
 
-                $viewParams['before'] = $data['before'] ?? null;
+                $viewParams = [
+                    'notes' => $this->database->getNotes(),
+                    'before' => $data['before'] ?? null
+                ];
 
                 break;
         }
 
-        $this->view->render($page, $viewParams);
+        $this->view->render($page, $viewParams ?? []);
     }
 
     /*---------------------------------
