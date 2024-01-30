@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace App;
 
-require_once('Exceptions/AppException.php');
-require_once('Exceptions/StorageException.php');
-require_once('Exceptions/ConfigurationException.php');
-require_once('Exceptions/NotFoundException.php');
-
-use App\Exception\ConfigurationException;
-use App\Exception\StorageException;
-use App\Exception\NotFoundException;
+use App\Exceptions\ConfigurationException;
+use App\Exceptions\StorageException;
+use App\Exceptions\NotFoundException;
 use PDO;
 use PDOException;
 use Throwable;

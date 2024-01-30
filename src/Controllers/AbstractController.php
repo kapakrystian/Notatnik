@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Controllers;
 
-require_once('src/Database.php');
-require_once('src/View.php');
-require_once('src/Exceptions/ConfigurationException.php');
-
-use App\Exception\ConfigurationException;
+use App\Database;
+use App\View;
+use App\Request;
+use App\Exceptions\ConfigurationException;
 
 abstract class AbstractController
 {
@@ -55,6 +54,24 @@ abstract class AbstractController
             $action = self::DEFAULT_ACTION . 'Action';
         }
         $this->$action();
+    }
+
+    protected function redirect(string $to, array $params): void
+    {
+        $location = $to;
+
+        if (count($params)) {
+            $queryParams = [];
+            foreach ($params as $key => $value) {
+                $queryParams[] = urlencode($key) . '=' . urlencode($value);
+            }
+
+            $queryParams = implode('&', $queryParams);
+            $location .= '?' . $queryParams;
+        }
+
+        header("Location: $location");
+        exit;
     }
 
     /*---------------------------------

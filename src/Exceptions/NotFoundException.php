@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Exception;
+namespace App\Exceptions;
 
-require_once('src/Exceptions/AppException.php');
-
-use App\Exception\AppException;
+// use App\Exception\AppException;
 
 class NotFoundException extends AppException
 {

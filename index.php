@@ -2,19 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App;
+spl_autoload_register(function (string $classNamespace) {
+    $path = str_replace(['\\', 'App/'], ['/', ''], $classNamespace);
+    $path = "src/$path.php";
+    require_once($path);
+});
 
 require_once('src/Utils/debug.php');
-require_once('src/NoteController.php');
-require_once('src/Request.php');
-require_once('src/Exceptions/AppException.php');
-
-use App\Request;
-use App\Exception\AppException;
-use App\Exception\ConfigurationException;
-use Throwable;
-
 $configuration = require_once("config/config.php");
+
+use App\Controllers\AbstractController;
+use App\Controllers\NoteController;
+use App\Request;
+use App\Exceptions\AppException;
+use App\Exceptions\ConfigurationException;
+
 
 $request = new Request($_GET, $_POST);
 
@@ -30,7 +32,7 @@ try {
 } catch (AppException $e) {
     echo '<h3>Wystąpił błąd w aplikacji</h3>';
     echo '<h5>' . $e->getMessage() . '</h5>';
-} catch (Throwable $e) {
+} catch (\Throwable $e) {
     echo '<h3>Wystąpił błąd w aplikacji</h3>';
     dump($e);
 }
