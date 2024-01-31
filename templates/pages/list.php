@@ -6,6 +6,9 @@
                     case 'created':
                         echo 'Utworzono nową notatkę';
                         break;
+                    case 'edited':
+                        echo 'Notatka została zaktualizowana';
+                        break;
                 }
             }
             ?>

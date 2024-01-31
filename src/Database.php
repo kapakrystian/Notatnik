@@ -31,7 +31,6 @@ class Database
             $query = "SELECT * FROM notes WHERE id = $id";
             $result = $this->conn->query($query);
             $note = $result->fetch(PDO::FETCH_ASSOC);
-
         } catch (Throwable $th) {
             dump($th);
             throw new StorageException('Nie udało się pobrać szczegółów notatki', 400, $th);
@@ -72,6 +71,24 @@ class Database
             throw new StorageException('Nie udało się utworzyć nowej notatki', 400, $th);
             dump($th);
             exit;
+        }
+    }
+
+    public function editNote(int $id, array $data)
+    {
+        try {
+            $title = $this->conn->quote($data['title']);
+            $description = $this->conn->quote($data['description']);
+
+            $query = "
+                UPDATE notes
+                SET title = $title, description = $description
+                WHERE id = $id
+            ";
+
+            $this->conn->exec($query);
+        } catch (Throwable $th) {
+            throw new StorageException('Nie udało się zaktualizować notatki', 400, $th);
         }
     }
 
