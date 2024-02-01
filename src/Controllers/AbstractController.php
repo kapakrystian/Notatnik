@@ -41,7 +41,7 @@ abstract class AbstractController
         $this->view = new View();
     }
 
-    public function run(): void
+    final public function run(): void
     {
         /*---------------------------------------------------------------------
         Przypisanie wartości zwracanej metody action() do zmiennej $action
@@ -56,7 +56,7 @@ abstract class AbstractController
         $this->$action();
     }
 
-    protected function redirect(string $to, array $params): void
+    final protected function redirect(string $to, array $params): void
     {
         $location = $to;
 
