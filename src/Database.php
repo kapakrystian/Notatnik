@@ -44,9 +44,13 @@ class Database
         return $note;
     }
 
-    public function getNotes(string $sortBy, string $sortOrder): array
+    public function getNotes(string $sortBy, string $sortOrder, int $pageNumber, $pageSize): array
     {
         try {
+
+            $limit = $pageSize;
+            $offset = ($pageNumber - 1) * $pageSize;
+
             if (!in_array($sortBy, ['created', 'title'])) {
                 $sortBy = 'title';
             }
@@ -58,12 +62,30 @@ class Database
             SELECT id, title, created 
             FROM notes
             ORDER BY $sortBy $sortOrder
+            LIMIT $offset, $limit
             ";
 
             $result = $this->conn->query($query);
             return $result->fetchAll(PDO::FETCH_ASSOC);
         } catch (Throwable $th) {
             throw new StorageException('Nie udało się pobrać danych o notatkach', 400, $th);
+        }
+    }
+
+    public function getCount(): int
+    {
+        try {
+            $query = "SELECT count(*) AS cn FROM notes";
+
+            $result = $this->conn->query($query);
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+            if ($result === false) {
+                throw new StorageException('Błąd przy próbie pobrania ilości notatek', 400);
+            }
+
+            return (int) $result['cn'];
+        } catch (Throwable $th) {
+            throw new StorageException('Nie udało się pobrać informacji o liczbie notatek', 400, $th);
         }
     }
 
