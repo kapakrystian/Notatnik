@@ -45,6 +45,44 @@ class Database
     }
 
 
+    public function searchNoteByDate(
+        string $date,
+        string $sortBy,
+        string $sortOrder,
+        int $pageNumber,
+        int $pageSize
+    ): array {
+        try {
+
+            $limit = $pageSize;
+            $offset = ($pageNumber - 1) * $pageSize;
+
+            if (!in_array($sortBy, ['created', 'title'])) {
+                $sortBy = 'title';
+            }
+
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'desc';
+            }
+
+            $date = $this->conn->quote($date . '%',  PDO::PARAM_STR);
+
+            $query = "
+            SELECT id, title, created 
+            FROM notes
+            WHERE created LIKE ($date)
+            ORDER BY $sortBy $sortOrder
+            LIMIT $offset, $limit
+            ";
+
+            $result = $this->conn->query($query);
+            return $result->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $th) {
+            throw new StorageException('Nie udało się wyszukać notatek', 400, $th);
+        }
+    }
+
+
     public function searchNotes(
         string $phrase,
         string $sortBy,
@@ -88,6 +126,23 @@ class Database
         try {
             $phrase = $this->conn->quote('%' . $phrase . '%', PDO::PARAM_STR);
             $query = "SELECT count(*) AS cn FROM notes WHERE title LIKE ($phrase)";
+            $result = $this->conn->query($query);
+            $result = $result->fetch(PDO::FETCH_ASSOC);
+            if ($result === false) {
+                throw new StorageException('Błąd przy próbie pobrania ilości notatek', 400);
+            }
+
+            return (int) $result['cn'];
+        } catch (Throwable $th) {
+            throw new StorageException('Nie udało się pobrać informacji o liczbie notatek', 400, $th);
+        }
+    }
+
+    public function getSearchCountByDate(string $date): int
+    {
+        try {
+            $date = $this->conn->quote($date . '%', PDO::PARAM_STR);
+            $query = "SELECT count(*) AS cn FROM notes WHERE created LIKE ($date)";
             $result = $this->conn->query($query);
             $result = $result->fetch(PDO::FETCH_ASSOC);
             if ($result === false) {

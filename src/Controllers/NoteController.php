@@ -37,6 +37,7 @@ class NoteController extends AbstractController
     public function listAction(): void
     {
         $phrase = $this->request->getParam('phrase');
+        $date = $this->request->getParam('date');
         $pageNumber = (int) $this->request->getParam('page', 1);
         $pageSize = (int) $this->request->getParam('pagesize', self::PAGE_SIZE);
 
@@ -47,12 +48,19 @@ class NoteController extends AbstractController
             $pageSize = self::PAGE_SIZE;
         }
 
-        if ($phrase) {
-            $note = $this->database->searchNotes($phrase, $sortBy, $sortOrder, $pageNumber, $pageSize);
-            $notes = $this->database->getSearchCount($phrase);
-        } else {
-            $note = $this->database->getNotes($sortBy, $sortOrder, $pageNumber, $pageSize);
-            $notes = $this->database->getCount();
+        switch (true) {
+            case $phrase:
+                $note = $this->database->searchNotes($phrase, $sortBy, $sortOrder, $pageNumber, $pageSize);
+                $notes = $this->database->getSearchCount($phrase);
+                break;
+            case $date:
+                $note = $this->database->searchNoteByDate($date, $sortBy, $sortOrder, $pageNumber, $pageSize);
+                $notes = $this->database->getSearchCountByDate($date);
+                break;
+            default:
+                $note = $this->database->getNotes($sortBy, $sortOrder, $pageNumber, $pageSize);
+                $notes = $this->database->getCount();
+                break;
         }
 
         $this->view->render('list', [
@@ -64,6 +72,7 @@ class NoteController extends AbstractController
             'sort' => ['by' => $sortBy, 'order' => $sortOrder],
             'notes' => $note,
             'phrase' => $phrase,
+            'date' => $date,
             'before' => $this->request->getParam('before'),
             'error' => $this->request->getParam('error')
         ]);

@@ -42,19 +42,21 @@
         $pages = $page['pages'] ?? 1;
 
         $phrase = $params['phrase'] ?? null;
+        $date = $params['date'] ?? null;
         ?>
 
         <div>
             <form class="settings-form" action="/" method="GET">
                 <div>
-                    <label>Wyszukaj: <input type="text" name="phrase" value="<?php echo $phrase ?>" /></label>
+                    <label>Wyszukaj po tytule: <input type="text" name="phrase" value="<?php echo $phrase ?>" /></label>
+                    <label style="padding-left: 15px;">WYSZUKAJ PO DACIE: <input type="date" name="date" value="<?php echo $date ?>" /></label>
                 </div>
-                <div>
+                <div style="float: left;">
                     <div>Sortuj po:</div>
                     <label>Tytule: <input name="sortby" type="radio" value="title" <?php echo $by === 'title' ? 'checked' : '' ?>></label>
                     <label>Dacie: <input name="sortby" type="radio" value="created" <?php echo $by === 'created' ? 'checked' : '' ?>></label>
                 </div>
-                <div>
+                <div style="float: left;">
                     <div>Kierunek sortowania:</div>
                     <label>Rosnąco: <input name="sortorder" type="radio" value="asc" <?php echo $order === 'asc' ? 'checked' : '' ?>></label></label>
                     <label>Malejąco: <input name="sortorder" type="radio" value="desc" <?php echo $order === 'desc' ? 'checked' : '' ?>></label></label>
@@ -100,7 +102,7 @@
             </table>
         </div>
 
-        <?php $paginationUrl =  "&phrase=$phrase&pagesize=$size?sortby=$by&sortorder=$order" ?>
+        <?php $paginationUrl = "&phrase=$phrase&pagesize=$size&sortby=$by&sortorder=$order&date=$date" ?>
 
         <ul class="pagination">
             <?php if ($currentPage !== 1) : ?>
