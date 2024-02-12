@@ -17,7 +17,7 @@ use App\Request;
 use App\Exceptions\AppException;
 use App\Exceptions\ConfigurationException;
 
-//dump($_SERVER);
+
 $request = new Request($_GET, $_POST, $_SERVER);
 
 try {

@@ -48,8 +48,8 @@
         <div>
             <form class="settings-form" action="/" method="GET">
                 <div>
-                    <label>Wyszukaj po tytule: <input type="text" name="phrase" value="<?php echo $phrase ?>" /></label>
-                    <label style="padding-left: 15px;">WYSZUKAJ PO DACIE: <input type="date" name="date" value="<?php echo $date ?>" /></label>
+                    <label>wyszukaj po tytule: <input type="text" name="phrase" value="<?php echo $phrase ?>" /></label>
+                    <label style="padding-left: 15px;">wyszukaj po dacie: <input type="date" name="date" value="<?php echo $date ?>" /></label>
                 </div>
                 <div style="float: left;">
                     <div>Sortuj po:</div>
@@ -102,7 +102,7 @@
             </table>
         </div>
 
-        <?php $paginationUrl = "&phrase=$phrase&pagesize=$size&sortby=$by&sortorder=$order&date=$date" ?>
+        <?php $paginationUrl = "&date=$date&phrase=$phrase&pagesize=$size&sortby=$by&sortorder=$order" ?>
 
         <ul class="pagination">
             <?php if ($currentPage !== 1) : ?>

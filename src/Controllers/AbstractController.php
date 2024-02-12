@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Database;
 use App\View;
 use App\Request;
 use App\Exceptions\ConfigurationException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\StorageException;
+use App\Model\NoteModel;
 
 abstract class AbstractController
 {
@@ -17,7 +19,7 @@ abstract class AbstractController
 
     protected Request $request;
     protected View $view;
-    protected Database $database;
+    protected NoteModel $noteModel;
 
     /*-----------------------------------------
     Statyk pobierający konfigurację bazy danych
@@ -35,7 +37,7 @@ abstract class AbstractController
         if (empty(self::$configuration['db'])) {
             throw new ConfigurationException('Configuration Error');
         }
-        $this->database = new Database(self::$configuration['db']);
+        $this->noteModel = new NoteModel(self::$configuration['db']);
 
         $this->request = $request;
         $this->view = new View();
@@ -48,12 +50,21 @@ abstract class AbstractController
         oraz wywołanie jej. Jeśli wartość jest stringiem, to wywołanie zmiennej
         spowoduje wykonanie metody o nazwie przechowywanej wewnątrz zmiennej.
         ----------------------------------------------------------------------*/
-        $action = $this->action() . 'Action';
+        try {
+            $action = $this->action() . 'Action';
 
-        if (!method_exists($this, $action)) {
-            $action = self::DEFAULT_ACTION . 'Action';
+            if (!method_exists($this, $action)) {
+                $action = self::DEFAULT_ACTION . 'Action';
+            }
+            $this->$action();
+        } catch (StorageException $e) {
+            $this->view->render(
+                'error',
+                ['message' => $e->getMessage()]
+            );
+        } catch (NotFoundException $e) {
+            $this->redirect('/', ['error' => 'noteNotFound']);
         }
-        $this->$action();
     }
 
     final protected function redirect(string $to, array $params): void

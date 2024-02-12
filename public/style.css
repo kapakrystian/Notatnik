@@ -126,21 +126,15 @@ form > div {
 
 form > div:first-child {
   margin-bottom: 20px;
-}
-
-form > div:first-child > label:first-child {
   text-transform: uppercase;
   font-weight: normal;
 }
 
-form > div:first-child > label:first-child > input {
+form > div:first-child > input {
   margin-left: 14px;
   font-family: montserrat;
   outline: none;
   font-size: 22px;
-}
-
-form > div:first-child > label:first-child > input:focus {
   box-shadow: 0 0 0px 2px cadetblue;
 }
 
